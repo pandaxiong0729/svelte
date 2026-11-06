@@ -1,0 +1,38 @@
+name: Validate documentation contributions
+on:
+  push:
+    branches: [codex/validate-docs-20261106]
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - pr: 19191
+            sha: bbbed11b734e839638f354f5a9c27eeeb2d3bb7c
+          - pr: 19192
+            sha: 2d3acad106a47cef2b66ce6a06b47429eedb2998
+    name: Svelte PR ${{ matrix.pr }} exact commit
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
+        with:
+          ref: ${{ matrix.sha }}
+          persist-credentials: false
+      - name: Verify checkout
+        env:
+          EXPECTED_SHA: ${{ matrix.sha }}
+        run: test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"
+      - uses: ./.github/actions/setup
+        with:
+          node-version: '24'
+      - run: pnpm playwright install --with-deps chromium
+      - run: pnpm build
+      - run: pnpm lint
+      - name: Full test suite
+        run: pnpm test --maxWorkers=2
+        env:
+          CI: true
