@@ -1,0 +1,40 @@
+name: Validate Svelte contributions November 8
+on:
+  push:
+    branches: [codex/validate-docs-20261108]
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - issue: 14023
+            sha: 5745824d90b450d0c01aaf8f01a436391200c1da
+          - issue: 11206
+            sha: 673d956b9b3dc655448651e96b86f1a8b8b0ec42
+          - issue: 10687
+            sha: 37606405aad88a24f8e78a2fc7cb8af3be0ff80f
+    name: Issue ${{ matrix.issue }} contribution exact commit
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
+        with:
+          ref: ${{ matrix.sha }}
+          persist-credentials: false
+      - name: Verify checkout
+        env:
+          EXPECTED_SHA: ${{ matrix.sha }}
+        run: test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"
+      - uses: ./.github/actions/setup
+        with:
+          node-version: '24'
+      - run: pnpm playwright install --with-deps chromium
+      - run: pnpm build
+      - run: pnpm lint
+      - name: Full test suite
+        run: pnpm test --maxWorkers=2
+        env:
+          CI: true
