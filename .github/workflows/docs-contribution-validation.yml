@@ -13,7 +13,7 @@ jobs:
       matrix:
         include:
           - issue: 18897
-            sha: adccf37cd4a104454915f2cce42c33a42960bb61
+            sha: ebeee7b3957ffaf4c01d2feaf6182d9a137d5a12
     name: Issue ${{ matrix.issue }} contribution exact commit
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
