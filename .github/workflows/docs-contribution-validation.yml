@@ -12,12 +12,8 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - issue: 14023
-            sha: 5745824d90b450d0c01aaf8f01a436391200c1da
-          - issue: 11206
-            sha: 673d956b9b3dc655448651e96b86f1a8b8b0ec42
-          - issue: 10687
-            sha: 37606405aad88a24f8e78a2fc7cb8af3be0ff80f
+          - issue: 18897
+            sha: adccf37cd4a104454915f2cce42c33a42960bb61
     name: Issue ${{ matrix.issue }} contribution exact commit
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
