@@ -1,0 +1,27 @@
+name: Validate resize binding documentation
+on:
+  push:
+    branches: [codex/validate-resize-20261112]
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
+        with:
+          ref: 9a157e28b13f41cbc39d73c3da0e8a309f83a335
+          persist-credentials: false
+      - name: Verify exact contribution commit
+        run: test "$(git rev-parse HEAD)" = "9a157e28b13f41cbc39d73c3da0e8a309f83a335"
+      - uses: ./.github/actions/setup
+        with:
+          node-version: '24'
+      - run: pnpm playwright install --with-deps chromium
+      - run: pnpm build
+      - run: pnpm lint
+      - name: Full test suite
+        run: pnpm test --maxWorkers=2
+        env:
+          CI: true
